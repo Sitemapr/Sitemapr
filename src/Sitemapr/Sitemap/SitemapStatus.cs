@@ -1,4 +1,4 @@
-namespace Sitemapr.Locator
+namespace Sitemapr.Sitemap
 {
     internal enum SitemapStatus
     {

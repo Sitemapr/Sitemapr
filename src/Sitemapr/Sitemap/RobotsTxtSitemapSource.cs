@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Sitemapr.Locator
+namespace Sitemapr.Sitemap
 {
-    public sealed class DefaultSitemapsSource : ISitemapsSource
+    public sealed class RobotsTxtSitemapSource : ISitemapSource
     {
         public Task<IReadOnlyCollection<Uri>> GetSitemaps(Uri domainUri)
         {

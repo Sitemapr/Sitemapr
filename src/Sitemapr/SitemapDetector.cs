@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Sitemapr.Sitemap;
 using Sitemapr.Utils;
 
 namespace Sitemapr
@@ -16,32 +16,67 @@ namespace Sitemapr
             _httpClientFactory = httpClientFactory;
         }
 
-        public Task<IReadOnlyList<Uri>> GetSitemapsAsync(Uri uri)
+        public Task<IReadOnlyList<Uri>> GetSitemapsAsync(Uri domainUri)
+        {
+            if (domainUri is null)
+            {
+                throw new ArgumentNullException(nameof(domainUri));
+            }
+            
+            return GetSitemapsInternalAsync(domainUri, default);
+        }
+        
+        public Task<IReadOnlyList<Uri>> GetSitemapsAsync(Uri domainUri, SitemapDetectionOptions options)
+        {
+            if (domainUri is null)
+            {
+                throw new ArgumentNullException(nameof(domainUri));
+            }
+            
+            if (options is null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+            
+            return GetSitemapsInternalAsync(domainUri, options);
+        }
+
+        private Task<IReadOnlyList<Uri>> GetSitemapsInternalAsync(Uri domainUri, SitemapDetectionOptions options)
+        {
+            if (domainUri is null)
+            {
+                throw new ArgumentNullException(nameof(domainUri));
+            }
+            
+            if (options is null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
+            var sitemapSources = options.GetSitemapSources();
+
+            return GetSitemapsOnDomain(domainUri, sitemapSources);
+        }
+
+        private Task<IReadOnlyList<Uri>> GetSitemapsOnDomain(Uri uri, IReadOnlyCollection<ISitemapSource> sitemapSources)
         {
             
         }
+    }
 
-        private async Task<List<Uri>> GetSitemapsFromRobotsTxt(Uri uri)
-        {
-            var robotsTxtUri = uri.ToRobotsTxtUri();
-            var responseStream = await _httpClientFactory.CreateClient("bob").GetStreamAsync(robotsTxtUri);
-
-            var sitemaps = new List<Uri>();
-            using (var streamReader = new StreamReader(responseStream))
-            {
-                while (streamReader.EndOfStream is false)
-                {
-                    var line = await streamReader.ReadLineAsync();
-                    if (line.StartsWith("Sitemap: ", StringComparison.OrdinalIgnoreCase))
-                    {
-                        
-                    }
-                }
-            }
-
-            return sitemaps;
-        }
+    public sealed class SitemapDetectionOptions
+    {
+        public SitemapSource? Source { get; set; } = SitemapSource.DefaultSitemap | SitemapSource.DefaultSitemapIndex | SitemapSource.RobotsTxt;
+        public IList<ISitemapSource> CustomSources { get; } = new List<ISitemapSource>();
+        public bool ValidateSitemap { get; set; } = true;
         
-        private 
+    }
+
+    [Flags]
+    public enum SitemapSource
+    {
+        DefaultSitemap,
+        DefaultSitemapIndex,
+        RobotsTxt
     }
 }

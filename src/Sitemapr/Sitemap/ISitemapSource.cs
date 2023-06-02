@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Sitemapr.Locator
+namespace Sitemapr.Sitemap
 {
-    public interface ISitemapsSource
+    public interface ISitemapSource
     {
         Task<IReadOnlyCollection<Uri>> GetSitemaps(Uri domainUri);
     }

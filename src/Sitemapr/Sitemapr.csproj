@@ -2,6 +2,8 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Version>0.1.1</Version>
     </PropertyGroup>
 
     <ItemGroup>
@@ -10,13 +12,13 @@
 
     <ItemGroup>
       <None Remove="Xsd\siteindex.xsd" />
-      <Content Include="Xsd\siteindex.xsd">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
+      <EmbeddedResource Include="Xsd\siteindex.xsd">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
       <None Remove="Xsd\sitemap.xsd" />
-      <Content Include="Xsd\sitemap.xsd">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
+      <EmbeddedResource Include="Xsd\sitemap.xsd">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
     </ItemGroup>
 
 </Project>

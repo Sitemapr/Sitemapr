@@ -6,6 +6,6 @@ namespace Sitemapr
 {
     public interface ISitemapDetector
     {
-        Task<IReadOnlyList<Uri>> GetSitemapsAsync(Uri uri);
+        Task<IReadOnlyList<Uri>> GetSitemapsAsync(Uri domainUri);
     }
 }
