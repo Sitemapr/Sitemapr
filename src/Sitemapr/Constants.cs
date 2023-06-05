@@ -2,6 +2,9 @@ namespace Sitemapr
 {
     public static class Constants
     {
-        //public const string HttpClient
+        public static class HttpClientNames
+        {
+            public static string SitemapDetector = "sitemap-detector";
+        }
     }
 }

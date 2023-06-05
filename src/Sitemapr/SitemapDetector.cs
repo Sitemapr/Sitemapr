@@ -77,21 +77,20 @@ namespace Sitemapr
             var sitemapSources = options.GetSitemapSources(domainPath);
             var sitemaps = new SortedSet<Uri>();
 
-            // TODO: Fix name.
-            var httpClient = _httpClientFactory.CreateClient("bob");
+            var httpClient = _httpClientFactory.CreateClient(Constants.HttpClientNames.SitemapDetector);
 
             foreach (var sitemapSource in sitemapSources)
             {
-                var sitemapsFromSource = await sitemapSource.GetSitemapPathsAsync(httpClient, cancellationToken);
+                var sitemapsFromSource = await sitemapSource.GetSitemapPathsAsync(domainPath, httpClient, cancellationToken);
                 foreach (var sitemapFromSource in sitemapsFromSource)
                 {
-                    if (options.ValidateSitemap)
+                    if (options.ValidateSitemaps)
                     {
                         
-                        var isValid =_sitemapValidator.IsValidSitemap(sitemapFromSource.);
+                        var isValid =_sitemapValidator.IsValidSitemap(sitemapFromSource.SitemapPath, cancellationToken);
                     }
                     
-                    sitemaps.Add(sitemapFromSource);
+                    sitemaps.Add(sitemapFromSource.SitemapPath);
                 }
             }
 
@@ -103,7 +102,8 @@ namespace Sitemapr
     {
         public SitemapSource? Source { get; set; } = SitemapSource.DefaultSitemap | SitemapSource.DefaultSitemapIndex | SitemapSource.RobotsTxt;
         public IList<SitemapsSource> CustomSources { get; } = new List<SitemapsSource>();
-        public bool ValidateSitemap { get; set; } = true;
+        public bool ValidateSitemaps { get; set; } = true;
+        public FilteringMode FilteringMode { get; set; }
     }
 
     [Flags]
@@ -112,5 +112,12 @@ namespace Sitemapr
         DefaultSitemap,
         DefaultSitemapIndex,
         RobotsTxt
+    }
+
+    public enum FilteringMode
+    {
+        None,
+        Invalid,
+        Failed
     }
 }
