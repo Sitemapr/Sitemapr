@@ -6,7 +6,7 @@ namespace Sitemapr.Utils
 {
     internal static class SitemapDetectionOptionsExtensions
     {
-        public static IReadOnlyCollection<SitemapSource> GetSitemapSources(this SitemapDetectionOptions options, Uri domainPath)
+        public static IReadOnlyCollection<SitemapSource> GetSitemapSources(this SitemapDetectionOptions options)
         {
             if (options is null)
             {

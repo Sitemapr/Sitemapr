@@ -29,7 +29,9 @@ namespace Sitemapr.SitemapSources
             
             try
             {
-                if (domainUri.TryWithPath(SitemapPath, out var sitemapUri) is false)
+                var cleanDomainUri = domainUri.ToCleanUri();
+                
+                if (cleanDomainUri.TryWithPath(SitemapPath, out var sitemapUri) is false)
                 {
                     return Task.FromResult(SitemapSourceResult.CreateInvalidUriResult());
                 }

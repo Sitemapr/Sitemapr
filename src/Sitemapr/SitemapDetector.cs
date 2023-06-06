@@ -74,14 +74,16 @@ namespace Sitemapr
                 throw new ArgumentNullException(nameof(options));
             }
 
-            var sitemapSources = options.GetSitemapSources(domainUri);
+            var cleanDomainUri = domainUri.ToCleanUri();
+
+            var sitemapSources = options.GetSitemapSources();
             var sitemaps = new SortedSet<Uri>();
 
             var httpClient = _httpClientFactory.CreateClient(Constants.HttpClientNames.SitemapDetector);
 
             foreach (var sitemapSource in sitemapSources)
             {
-                var sitemapSourceResult = await sitemapSource.GetSitemapUrisAsync(domainUri, httpClient, cancellationToken);
+                var sitemapSourceResult = await sitemapSource.GetSitemapUrisAsync(cleanDomainUri, httpClient, cancellationToken);
                 
                 // TODO: Check result
                 
