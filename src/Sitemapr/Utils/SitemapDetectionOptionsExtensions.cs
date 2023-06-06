@@ -1,39 +1,39 @@
 using System;
 using System.Collections.Generic;
-using Sitemapr.Sitemap;
+using Sitemapr.SitemapSources;
 
 namespace Sitemapr.Utils
 {
     internal static class SitemapDetectionOptionsExtensions
     {
-        public static IReadOnlyCollection<SitemapsSource> GetSitemapSources(this SitemapDetectionOptions options, Uri domainPath)
+        public static IReadOnlyCollection<SitemapSource> GetSitemapSources(this SitemapDetectionOptions options, Uri domainPath)
         {
             if (options is null)
             {
                 throw new ArgumentNullException(nameof(options));
             }
 
-            var sitemapSources = new List<SitemapsSource>();
+            var sitemapSources = new List<SitemapSource>();
 
             if (options.Source.HasValue)
             {
-                if (options.Source.Value.HasFlag(SitemapSource.DefaultSitemap))
+                if (options.Source.Value.HasFlag(DefaultSitemapSource.Sitemap))
                 {
-                    sitemapSources.Add(new StandardSitemapsSource(domainPath.ToDefaultSitemapUri()));
+                    sitemapSources.Add(StandardSitemapSource.CreateDefaultSource());
                 }
                 
-                if (options.Source.Value.HasFlag(SitemapSource.DefaultSitemapIndex))
+                if (options.Source.Value.HasFlag(DefaultSitemapSource.SitemapIndex))
                 {
-                    sitemapSources.Add(new IndexSitemapsSource());
+                    sitemapSources.Add(new IndexSitemapSource());
                 }
                 
-                if (options.Source.Value.HasFlag(SitemapSource.RobotsTxt))
+                if (options.Source.Value.HasFlag(DefaultSitemapSource.RobotsTxt))
                 {
-                    sitemapSources.Add(new RobotsTxtSitemapsSource(domainPath.ToRobotsTxtUri()));
+                    sitemapSources.Add(RobotsTxtSitemapSource.CreateDefaultSource());
                 }
             }
             
-            sitemapSources.AddRange(options.CustomSources);
+            sitemapSources.AddRange(options.Sources);
             return sitemapSources;
         }
     }
