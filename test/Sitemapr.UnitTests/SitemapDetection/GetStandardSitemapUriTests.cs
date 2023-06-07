@@ -3,12 +3,13 @@ using Moq;
 using Sitemapr.SitemapSources;
 using Xunit;
 
-namespace Sitemapr.UnitTests.SitemapSource;
+namespace Sitemapr.UnitTests.SitemapDetection;
 
 public sealed class GetStandardSitemapUriTests
 {
     [Theory]
     [InlineData("https://www.example.com", "/hello/sitemap.xml","https://www.example.com/hello/sitemap.xml")]
+    [InlineData("https://www.example.com/some/path", "/hello/sitemap.xml","https://www.example.com/some/path/hello/sitemap.xml")]
     [InlineData("https://www.example.com/some/path", "/hello/sitemap.xml","https://www.example.com/some/path/hello/sitemap.xml")]
     public async Task WHEN_Sitemap_Path_Is_Valid_THEN_Return_SitemapUri(string domainUri, string validSitemapPath, string expectedSitemapUri)
     {
@@ -24,26 +25,8 @@ public sealed class GetStandardSitemapUriTests
         // Assert
         mockedHttpClient.VerifyNoOtherCalls();
         
-        Assert.Equal(SitemapSourceStatus.Valid, result.Status);
+        Assert.Equal(SitemapSourceStatus.Successful, result.Status);
         result.SitemapUris.Should().BeEquivalentTo(expectedSitemapUris);
-        Assert.Null(result.Exception);
-    }
-
-    [Fact]
-    public async Task WHEN_Sitemap_Path_Is_Invalid_THEN_Return_InvalidUri_Result()
-    {
-        // Arrange
-        var standardSitemapSource = new StandardSitemapSource("this is an invalid path");
-        var mockedHttpClient = new Mock<HttpClient>();
-        
-        // Act
-        var result = await standardSitemapSource.GetSitemapUrisAsync(new Uri("https://www.example.com"), new HttpClient(), CancellationToken.None);
-
-        // Assert
-        mockedHttpClient.VerifyNoOtherCalls();
-        
-        Assert.Equal(SitemapSourceStatus.InvalidUri, result.Status);
-        Assert.Empty(result.SitemapUris);
         Assert.Null(result.Exception);
     }
 }

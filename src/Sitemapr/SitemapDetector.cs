@@ -74,7 +74,7 @@ namespace Sitemapr
                 throw new ArgumentNullException(nameof(options));
             }
 
-            var cleanDomainUri = domainUri.ToCleanUri();
+            var domainBaseUri = domainUri.ToCleanBaseUri();
 
             var sitemapSources = options.GetSitemapSources();
             var sitemaps = new SortedSet<Uri>();
@@ -83,7 +83,7 @@ namespace Sitemapr
 
             foreach (var sitemapSource in sitemapSources)
             {
-                var sitemapSourceResult = await sitemapSource.GetSitemapUrisAsync(cleanDomainUri, httpClient, cancellationToken);
+                var sitemapSourceResult = await sitemapSource.GetSitemapUrisAsync(domainBaseUri, httpClient, cancellationToken);
                 
                 // TODO: Check result
                 

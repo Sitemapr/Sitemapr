@@ -7,7 +7,7 @@ namespace Sitemapr.SitemapSources
 {
     public sealed class IndexSitemapSource : SitemapSource
     {
-        internal override Task<SitemapSourceResult> GetSitemapUrisAsync(Uri domainUri, HttpClient httpClient, CancellationToken cancellationToken)
+        internal override Task<SitemapSourceResult> GetSitemapUrisAsync(Uri rootUri, HttpClient httpClient, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

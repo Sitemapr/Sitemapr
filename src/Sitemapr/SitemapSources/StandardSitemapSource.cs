@@ -15,11 +15,11 @@ namespace Sitemapr.SitemapSources
 
         public string SitemapPath { get; }
         
-        internal override Task<SitemapSourceResult> GetSitemapUrisAsync(Uri domainUri, HttpClient httpClient, CancellationToken cancellationToken)
+        internal override Task<SitemapSourceResult> GetSitemapUrisAsync(Uri rootUri, HttpClient httpClient, CancellationToken cancellationToken)
         {
-            if (domainUri is null)
+            if (rootUri is null)
             {
-                throw new ArgumentNullException(nameof(domainUri));
+                throw new ArgumentNullException(nameof(rootUri));
             }
             
             if (httpClient is null)
@@ -29,14 +29,12 @@ namespace Sitemapr.SitemapSources
             
             try
             {
-                var cleanDomainUri = domainUri.ToCleanUri();
-                
-                if (cleanDomainUri.TryWithPath(SitemapPath, out var sitemapUri) is false)
+                if (rootUri.TryAppendPath(SitemapPath, out var sitemapUri) is false)
                 {
                     return Task.FromResult(SitemapSourceResult.CreateInvalidUriResult());
                 }
 
-                return Task.FromResult(SitemapSourceResult.CreateValidResult(new []{ sitemapUri }));
+                return Task.FromResult(SitemapSourceResult.CreateSuccessfulResult(new []{ sitemapUri }));
             }
             catch
             {

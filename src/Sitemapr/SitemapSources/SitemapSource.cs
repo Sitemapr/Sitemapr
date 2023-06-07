@@ -8,6 +8,6 @@ namespace Sitemapr.SitemapSources
 {
     public abstract class SitemapSource
     {
-        internal abstract Task<SitemapSourceResult> GetSitemapUrisAsync(Uri domainUri, HttpClient httpClient, CancellationToken cancellationToken);
+        internal abstract Task<SitemapSourceResult> GetSitemapUrisAsync(Uri rootUri, HttpClient httpClient, CancellationToken cancellationToken);
     }
 }

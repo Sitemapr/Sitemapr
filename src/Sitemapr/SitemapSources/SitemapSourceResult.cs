@@ -17,20 +17,20 @@ namespace Sitemapr.SitemapSources
         public SitemapSourceStatus Status { get; }
         public Exception Exception { get; }
 
-        public static SitemapSourceResult CreateValidResult(IEnumerable<Uri> sitemapUris) =>
-            new SitemapSourceResult(sitemapUris, SitemapSourceStatus.Valid);
+        public static SitemapSourceResult CreateSuccessfulResult(IEnumerable<Uri> sitemapUris) =>
+            new SitemapSourceResult(sitemapUris, SitemapSourceStatus.Successful);
 
         public static SitemapSourceResult CreateInvalidUriResult() =>
             new SitemapSourceResult(Array.Empty<Uri>(), SitemapSourceStatus.InvalidUri);
 
-        public static SitemapSourceResult CreateErrorResult(Exception exception = null) =>
-            new SitemapSourceResult(Array.Empty<Uri>(), SitemapSourceStatus.Invalid, exception);
+        public static SitemapSourceResult CreateFailedResult(Exception exception = null) =>
+            new SitemapSourceResult(Array.Empty<Uri>(), SitemapSourceStatus.Failed, exception);
     }
 
     public enum SitemapSourceStatus
     {
-        Valid,
+        Successful,
         InvalidUri,
-        Invalid
+        Failed
     }
 }

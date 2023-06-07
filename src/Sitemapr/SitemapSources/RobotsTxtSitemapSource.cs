@@ -18,24 +18,24 @@ namespace Sitemapr.SitemapSources
 
         public string RobotsTxtPath { get; }
 
-        internal override async Task<SitemapSourceResult> GetSitemapUrisAsync(Uri domainUri, HttpClient httpClient, CancellationToken cancellationToken)
+        internal override async Task<SitemapSourceResult> GetSitemapUrisAsync(Uri rootUri, HttpClient httpClient, CancellationToken cancellationToken)
         {
-            if (domainUri.TryWithPath(RobotsTxtPath, out var robotsTxtUri) is false)
+            if (rootUri.TryAppendPath(RobotsTxtPath, out var robotsTxtUri) is false)
             {
                 return SitemapSourceResult.CreateInvalidUriResult();
             }
-
+            
             try
             {
                 var response = await httpClient.GetAsync(robotsTxtUri, cancellationToken);
-
-                if (response.IsSuccessStatusCode is false && response.StatusCode == HttpStatusCode.NotFound)
+            
+                if (response.IsSuccessStatusCode is false)
                 {
-                    return SitemapSourceResult.CreateErrorResult();
+                    return SitemapSourceResult.CreateFailedResult();
                 }
-
+            
                 var sitemapUris = new List<Uri>();
-
+            
                 var responseContentStream = await response.Content.ReadAsStreamAsync();
                 using (var streamReader = new StreamReader(responseContentStream))
                 {
@@ -46,12 +46,12 @@ namespace Sitemapr.SitemapSources
                         sitemapUris.Add(sitemapUri);
                     }
                 }
-
-                return SitemapSourceResult.CreateValidResult(sitemapUris);
+            
+                return SitemapSourceResult.CreateSuccessfulResult(sitemapUris);
             }
             catch(Exception exception)
             {
-                return SitemapSourceResult.CreateErrorResult(exception);
+                return SitemapSourceResult.CreateFailedResult(exception);
             }
         }
 
