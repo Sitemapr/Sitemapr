@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,35 +19,61 @@ namespace Sitemapr
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<bool> IsValidSitemap(Uri sitemapPath, CancellationToken cancellationToken)
+        public async Task<SitemapValidationResult> IsValidSitemapAsync(Uri sitemapPath, CancellationToken cancellationToken)
         {
             try
             {
-                // TODO: Fix client name.
-                var httpClient = _httpClientFactory.CreateClient("bob");
-                var httpResponse = await httpClient.GetAsync(sitemapPath, cancellationToken);
-
-                if (httpResponse.IsSuccessStatusCode is false)
+                XDocument sitemapXmlDocument = null;
+                using (var httpClient = _httpClientFactory.CreateClient(Constants.HttpClientNames.SitemapValidator))
+                using (var sitemapResponse = await httpClient.GetAsync(sitemapPath, cancellationToken))
                 {
-                    return false;
+                    if (sitemapResponse.IsSuccessStatusCode is false && sitemapResponse.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        return new SitemapValidationResult(SitemapStatus.NotFound, message: sitemapResponse.ReasonPhrase);
+                    }
+
+                    sitemapResponse.EnsureSuccessStatusCode();
+                
+                    sitemapXmlDocument = await LoadXmlDocumentFromHttpResponse(sitemapResponse);
                 }
-
-                var responseStream = await httpResponse.Content.ReadAsStreamAsync();
-                var sitemapXmlDocument = XDocument.Load(responseStream);
-
+                
                 var xmlSchemas = _xmlSchemaSource.SitemapXmlSchema;
-            
-                var sitemapIsValid = true;
+                
+                SitemapValidationResult validationResult = null;
                 sitemapXmlDocument.Validate(xmlSchemas, (sender, args) =>
                 {
-                    sitemapIsValid = false;
+                    if (args.Severity == XmlSeverityType.Warning)
+                    {
+                        validationResult = new SitemapValidationResult(
+                            status: SitemapStatus.Invalid,
+                            message: args.Message,
+                            exception: args.Exception
+                        );
+                    }
+                    
+                    if (args.Severity == XmlSeverityType.Error)
+                    {
+                        validationResult = new SitemapValidationResult(
+                            status: SitemapStatus.Failed,
+                            message: args.Message,
+                            exception: args.Exception
+                        );
+                    }
                 });
 
-                return sitemapIsValid;
+                return validationResult ??  new SitemapValidationResult(status: SitemapStatus.Valid);
             }
-            catch
+            catch (Exception exception)
             {
-                return false;
+                return new SitemapValidationResult(SitemapStatus.Failed, exception: exception);
+            }
+        }
+
+        private static async Task<XDocument> LoadXmlDocumentFromHttpResponse(HttpResponseMessage httpResponseMessage)
+        {
+            using (var sitemapStream = await httpResponseMessage.Content.ReadAsStreamAsync())
+            {
+                return XDocument.Load(sitemapStream);
             }
         }
     }

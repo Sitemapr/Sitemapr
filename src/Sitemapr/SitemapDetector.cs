@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using Sitemapr.SitemapSources;
 using Sitemapr.Utils;
 
@@ -22,7 +21,7 @@ namespace Sitemapr
             _httpClientFactory = httpClientFactory;
         }
 
-        public Task<IReadOnlyList<Uri>> GetSitemapsAsync(Uri domainUri)
+        public Task<IReadOnlyList<Sitemap>> GetSitemapsAsync(Uri domainUri)
         {
             if (domainUri is null)
             {
@@ -32,7 +31,7 @@ namespace Sitemapr
             return GetSitemapsInternalAsync(domainUri, default, CancellationToken.None);
         }
         
-        public Task<IReadOnlyList<Uri>> GetSitemapsAsync(Uri domainUri, SitemapDetectionOptions options)
+        public Task<IReadOnlyList<Sitemap>> GetSitemapsAsync(Uri domainUri, SitemapDetectionOptions options)
         {
             if (domainUri is null)
             {
@@ -47,7 +46,7 @@ namespace Sitemapr
             return GetSitemapsInternalAsync(domainUri, options, CancellationToken.None);
         }
         
-        public Task<IReadOnlyList<Uri>> GetSitemapsAsync(Uri domainUri, SitemapDetectionOptions options, CancellationToken cancellationToken)
+        public Task<IReadOnlyList<Sitemap>> GetSitemapsAsync(Uri domainUri, SitemapDetectionOptions options, CancellationToken cancellationToken)
         {
             if (domainUri is null)
             {
@@ -62,7 +61,7 @@ namespace Sitemapr
             return GetSitemapsInternalAsync(domainUri, options, cancellationToken);
         }
 
-        private async Task<IReadOnlyList<Uri>> GetSitemapsInternalAsync(Uri domainUri, SitemapDetectionOptions options, CancellationToken cancellationToken)
+        private async Task<IReadOnlyList<Sitemap>> GetSitemapsInternalAsync(Uri domainUri, SitemapDetectionOptions options, CancellationToken cancellationToken)
         {
             if (domainUri is null)
             {
@@ -77,7 +76,7 @@ namespace Sitemapr
             var domainBaseUri = domainUri.ToCleanBaseUri();
 
             var sitemapSources = options.GetSitemapSources();
-            var sitemaps = new SortedSet<Uri>();
+            var sitemaps = new Dictionary<Uri, Sitemap>();
 
             var httpClient = _httpClientFactory.CreateClient(Constants.HttpClientNames.SitemapDetector);
 
@@ -89,26 +88,58 @@ namespace Sitemapr
                 
                 foreach (var sitemapUri in sitemapSourceResult.SitemapUris)
                 {
-                    // TODO: Validate
-                    // if (options.ValidateSitemaps)
-                    // {
-                    //     var isValid =_sitemapValidator.IsValidSitemap(sitemapUri, cancellationToken);
-                    // }
+                    var sitemapStatus = SitemapStatus.Valid;
                     
-                    sitemaps.Add(sitemapUri);
+                    
+                    if (options.ValidateSitemaps)
+                    {
+                        var validationResult = await _sitemapValidator.IsValidSitemapAsync(sitemapUri, cancellationToken);
+                        
+                    }
+                    
+                    
+                    
+                    if (sitemaps.TryGetValue(sitemapUri, out var existingSitemap))
+                    {
+                        
+                    }
+
+                    sitemaps[sitemapUri] = new Sitemap(
+                        sitemapPath: sitemapUri,
+                        status: sitemapStatus,
+                        source: sitemapSource
+                    );
                 }
             }
 
-            return sitemaps.ToList().AsReadOnly();
+            return sitemaps.Values.ToList().AsReadOnly();
+        }
+
+        private bool IsBetterSitemap(Sitemap existingSitemap)
+        {
+            if (existingSitemap is null)
+            {
+                throw new ArgumentNullException(nameof(existingSitemap));
+            }
+            
+            
         }
     }
 
     public sealed class SitemapDetectionOptions
     {
-        public DefaultSitemapSource? Source { get; set; } = DefaultSitemapSource.Sitemap | DefaultSitemapSource.SitemapIndex | DefaultSitemapSource.RobotsTxt;
-        public IList<SitemapSource> Sources { get; } = new List<SitemapSource>();
-        public bool ValidateSitemaps { get; set; } = true;
+        public DefaultSitemapSource? DefaultSources { get; set; }
+        public IList<SitemapSource> Sources { get; }
+        public bool ValidateSitemaps { get; set; }
         public FilteringMode FilteringMode { get; set; }
+
+        public SitemapDetectionOptions()
+        {
+            DefaultSources = DefaultSitemapSource.Sitemap | DefaultSitemapSource.SitemapIndex | DefaultSitemapSource.RobotsTxt;
+            Sources = new List<SitemapSource>();
+            ValidateSitemaps = true;
+            FilteringMode = FilteringMode.OnFoundNot;
+        }
     }
 
     [Flags]
@@ -121,8 +152,9 @@ namespace Sitemapr
 
     public enum FilteringMode
     {
-        None,
-        Invalid,
-        Failed
+        NoFiltering,
+        OnValidationError,
+        OnFoundNot,
+        OnFailure
     }
 }

@@ -6,6 +6,6 @@ namespace Sitemapr
 {
     public interface ISitemapValidator
     {
-        Task<bool> IsValidSitemap(Uri sitemapPath, CancellationToken cancellationToken);
+        Task<SitemapValidationResult> IsValidSitemapAsync(Uri sitemapPath, CancellationToken cancellationToken);
     }
 }

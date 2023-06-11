@@ -15,19 +15,19 @@ namespace Sitemapr.Utils
 
             var sitemapSources = new List<SitemapSource>();
 
-            if (options.Source.HasValue)
+            if (options.DefaultSources.HasValue)
             {
-                if (options.Source.Value.HasFlag(DefaultSitemapSource.Sitemap))
+                if (options.DefaultSources.Value.HasFlag(DefaultSitemapSource.Sitemap))
                 {
                     sitemapSources.Add(StandardSitemapSource.CreateDefaultSource());
                 }
                 
-                if (options.Source.Value.HasFlag(DefaultSitemapSource.SitemapIndex))
+                if (options.DefaultSources.Value.HasFlag(DefaultSitemapSource.SitemapIndex))
                 {
                     sitemapSources.Add(new IndexSitemapSource());
                 }
                 
-                if (options.Source.Value.HasFlag(DefaultSitemapSource.RobotsTxt))
+                if (options.DefaultSources.Value.HasFlag(DefaultSitemapSource.RobotsTxt))
                 {
                     sitemapSources.Add(RobotsTxtSitemapSource.CreateDefaultSource());
                 }

@@ -7,8 +7,8 @@ namespace Sitemapr
 {
     public interface ISitemapDetector
     {
-        Task<IReadOnlyList<Uri>> GetSitemapsAsync(Uri domainUri);
-        Task<IReadOnlyList<Uri>> GetSitemapsAsync(Uri domainUri, SitemapDetectionOptions options);
-        Task<IReadOnlyList<Uri>> GetSitemapsAsync(Uri domainUri, SitemapDetectionOptions options, CancellationToken cancellationToken);
+        Task<IReadOnlyList<Sitemap>> GetSitemapsAsync(Uri domainUri);
+        Task<IReadOnlyList<Sitemap>> GetSitemapsAsync(Uri domainUri, SitemapDetectionOptions options);
+        Task<IReadOnlyList<Sitemap>> GetSitemapsAsync(Uri domainUri, SitemapDetectionOptions options, CancellationToken cancellationToken);
     }
 }

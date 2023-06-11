@@ -5,6 +5,7 @@ namespace Sitemapr
         public static class HttpClientNames
         {
             public static string SitemapDetector = "sitemap-detector";
+            public static string SitemapValidator = "sitemap-validator";
         }
 
         public static class Paths
