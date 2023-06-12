@@ -22,6 +22,9 @@ namespace Sitemapr.SitemapSources
 
         public static SitemapSourceResult CreateInvalidUriResult() =>
             new SitemapSourceResult(Array.Empty<Uri>(), SitemapSourceStatus.InvalidUri);
+        
+        public static SitemapSourceResult CreateNotFoundResult(Exception exception = null) =>
+            new SitemapSourceResult(Array.Empty<Uri>(), SitemapSourceStatus.NotFound, exception);
 
         public static SitemapSourceResult CreateFailedResult(Exception exception = null) =>
             new SitemapSourceResult(Array.Empty<Uri>(), SitemapSourceStatus.Failed, exception);
@@ -31,6 +34,7 @@ namespace Sitemapr.SitemapSources
     {
         Successful,
         InvalidUri,
+        NotFound,
         Failed
     }
 }

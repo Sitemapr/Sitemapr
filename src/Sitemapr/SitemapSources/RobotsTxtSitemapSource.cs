@@ -29,6 +29,11 @@ namespace Sitemapr.SitemapSources
             {
                 var response = await httpClient.GetAsync(robotsTxtUri, cancellationToken);
             
+                if (response.IsSuccessStatusCode is false && response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return SitemapSourceResult.CreateNotFoundResult();
+                }
+                
                 if (response.IsSuccessStatusCode is false)
                 {
                     return SitemapSourceResult.CreateFailedResult();

@@ -3,13 +3,12 @@ using Moq;
 using Sitemapr.SitemapSources;
 using Xunit;
 
-namespace Sitemapr.UnitTests.SitemapDetection;
+namespace Sitemapr.Test.UnitTests.SitemapDetection;
 
 public sealed class GetStandardSitemapUriTests
 {
     [Theory]
     [InlineData("https://www.example.com", "/hello/sitemap.xml","https://www.example.com/hello/sitemap.xml")]
-    [InlineData("https://www.example.com/some/path", "/hello/sitemap.xml","https://www.example.com/some/path/hello/sitemap.xml")]
     [InlineData("https://www.example.com/some/path", "/hello/sitemap.xml","https://www.example.com/some/path/hello/sitemap.xml")]
     public async Task WHEN_Sitemap_Path_Is_Valid_THEN_Return_SitemapUri(string domainUri, string validSitemapPath, string expectedSitemapUri)
     {

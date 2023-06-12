@@ -115,15 +115,15 @@ namespace Sitemapr
             return sitemaps.Values.ToList().AsReadOnly();
         }
 
-        private bool IsBetterSitemap(Sitemap existingSitemap)
-        {
-            if (existingSitemap is null)
-            {
-                throw new ArgumentNullException(nameof(existingSitemap));
-            }
-            
-            
-        }
+        // private bool IsBetterSitemap(Sitemap existingSitemap)
+        // {
+        //     if (existingSitemap is null)
+        //     {
+        //         throw new ArgumentNullException(nameof(existingSitemap));
+        //     }
+        //     
+        //     
+        // }
     }
 
     public sealed class SitemapDetectionOptions

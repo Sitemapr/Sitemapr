@@ -23,7 +23,7 @@
 
     <ItemGroup>
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-            <_Parameter1>Sitemapr.UnitTests</_Parameter1>
+            <_Parameter1>Sitemapr.Test.UnitTests</_Parameter1>
         </AssemblyAttribute>
     </ItemGroup>
 

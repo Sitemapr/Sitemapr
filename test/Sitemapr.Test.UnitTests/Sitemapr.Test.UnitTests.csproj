@@ -19,6 +19,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\src\Sitemapr\Sitemapr.csproj" />
+      <ProjectReference Include="..\Sitemapr.Test.Shared\Sitemapr.Test.Shared.csproj" />
     </ItemGroup>
 
 </Project>
