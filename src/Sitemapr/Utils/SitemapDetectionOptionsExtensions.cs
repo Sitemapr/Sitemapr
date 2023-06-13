@@ -1,39 +1,39 @@
 using System;
 using System.Collections.Generic;
-using Sitemapr.SitemapSources;
+using Sitemapr.SitemapCollectors;
 
 namespace Sitemapr.Utils
 {
     internal static class SitemapDetectionOptionsExtensions
     {
-        public static IReadOnlyCollection<SitemapSource> GetSitemapSources(this SitemapDetectionOptions options)
+        public static IReadOnlyCollection<SitemapCollector> GetSitemapCollectors(this SitemapDetectionOptions options)
         {
             if (options is null)
             {
                 throw new ArgumentNullException(nameof(options));
             }
 
-            var sitemapSources = new List<SitemapSource>();
+            var sitemapSources = new List<SitemapCollector>();
 
-            if (options.DefaultSources.HasValue)
+            if (options.Collectors.HasValue)
             {
-                if (options.DefaultSources.Value.HasFlag(DefaultSitemapSource.Sitemap))
+                if (options.Collectors.Value.HasFlag(DefaultSitemapCollectors.Sitemap))
                 {
-                    sitemapSources.Add(StandardSitemapSource.CreateDefaultSource());
+                    sitemapSources.Add(StandardSitemapCollector.CreateDefaultCollector());
                 }
                 
-                if (options.DefaultSources.Value.HasFlag(DefaultSitemapSource.SitemapIndex))
+                if (options.Collectors.Value.HasFlag(DefaultSitemapCollectors.SitemapIndex))
                 {
-                    sitemapSources.Add(new IndexSitemapSource());
+                    sitemapSources.Add(IndexSitemapCollector.CreateDefaultCollector());
                 }
                 
-                if (options.DefaultSources.Value.HasFlag(DefaultSitemapSource.RobotsTxt))
+                if (options.Collectors.Value.HasFlag(DefaultSitemapCollectors.RobotsTxt))
                 {
-                    sitemapSources.Add(RobotsTxtSitemapSource.CreateDefaultSource());
+                    sitemapSources.Add(RobotsTxtSitemapCollector.CreateDefaultCollector());
                 }
             }
             
-            sitemapSources.AddRange(options.Sources);
+            sitemapSources.AddRange(options.CustomCollectors);
             return sitemapSources;
         }
     }

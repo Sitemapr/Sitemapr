@@ -2,9 +2,9 @@ namespace Sitemapr
 {
     public enum SitemapStatus
     {
-        Valid,
-        Invalid,
-        NotFound,
-        Failed
+        Valid = 0,
+        Invalid = 1,
+        NotFound = 2,
+        Failed = 3
     }
 }

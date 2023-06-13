@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Sitemapr.SitemapSources;
+using Sitemapr.SitemapCollectors;
 using Sitemapr.Utils;
 
 namespace Sitemapr
@@ -75,14 +74,14 @@ namespace Sitemapr
 
             var domainBaseUri = domainUri.ToCleanBaseUri();
 
-            var sitemapSources = options.GetSitemapSources();
+            var sitemapSources = options.GetSitemapCollectors();
             var sitemaps = new Dictionary<Uri, Sitemap>();
 
             var httpClient = _httpClientFactory.CreateClient(Constants.HttpClientNames.SitemapDetector);
 
             foreach (var sitemapSource in sitemapSources)
             {
-                var sitemapSourceResult = await sitemapSource.GetSitemapUrisAsync(domainBaseUri, httpClient, cancellationToken);
+                var sitemapSourceResult = await sitemapSource.GetSitemapsAsync(domainBaseUri, httpClient, cancellationToken);
                 
                 // TODO: Check result
                 
@@ -90,71 +89,57 @@ namespace Sitemapr
                 {
                     var sitemapStatus = SitemapStatus.Valid;
                     
-                    
                     if (options.ValidateSitemaps)
                     {
                         var validationResult = await _sitemapValidator.IsValidSitemapAsync(sitemapUri, cancellationToken);
                         
-                    }
-                    
-                    
-                    
-                    if (sitemaps.TryGetValue(sitemapUri, out var existingSitemap))
-                    {
-                        
+                        if (sitemaps.TryGetValue(sitemapUri, out var existingSitemap) && existingSitemap.Status.IsBetterThanOrEqualTo(validationResult.Status))
+                        {
+                            continue;
+                        }
                     }
 
                     sitemaps[sitemapUri] = new Sitemap(
                         sitemapPath: sitemapUri,
                         status: sitemapStatus,
-                        source: sitemapSource
+                        collector: sitemapSource
                     );
                 }
             }
 
             return sitemaps.Values.ToList().AsReadOnly();
         }
-
-        // private bool IsBetterSitemap(Sitemap existingSitemap)
-        // {
-        //     if (existingSitemap is null)
-        //     {
-        //         throw new ArgumentNullException(nameof(existingSitemap));
-        //     }
-        //     
-        //     
-        // }
     }
 
     public sealed class SitemapDetectionOptions
     {
-        public DefaultSitemapSource? DefaultSources { get; set; }
-        public IList<SitemapSource> Sources { get; }
+        public DefaultSitemapCollectors? Collectors { get; set; }
+        public IList<SitemapCollector> CustomCollectors { get; }
         public bool ValidateSitemaps { get; set; }
-        public FilteringMode FilteringMode { get; set; }
+        public FilteringLevel FilteringLevel { get; set; }
 
         public SitemapDetectionOptions()
         {
-            DefaultSources = DefaultSitemapSource.Sitemap | DefaultSitemapSource.SitemapIndex | DefaultSitemapSource.RobotsTxt;
-            Sources = new List<SitemapSource>();
+            Collectors = DefaultSitemapCollectors.Sitemap | DefaultSitemapCollectors.SitemapIndex | DefaultSitemapCollectors.RobotsTxt;
+            CustomCollectors = new List<SitemapCollector>();
             ValidateSitemaps = true;
-            FilteringMode = FilteringMode.OnFoundNot;
+            FilteringLevel = FilteringLevel.NotFound;
         }
     }
 
     [Flags]
-    public enum DefaultSitemapSource
+    public enum DefaultSitemapCollectors
     {
         Sitemap,
         SitemapIndex,
         RobotsTxt
     }
 
-    public enum FilteringMode
+    public enum FilteringLevel
     {
-        NoFiltering,
-        OnValidationError,
-        OnFoundNot,
-        OnFailure
+        None,
+        Invalid,
+        NotFound,
+        Error
     }
 }

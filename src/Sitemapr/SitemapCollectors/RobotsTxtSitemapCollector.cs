@@ -7,22 +7,22 @@ using System.Threading;
 using System.Threading.Tasks;
 using Sitemapr.Utils;
 
-namespace Sitemapr.SitemapSources
+namespace Sitemapr.SitemapCollectors
 {
-    public sealed class RobotsTxtSitemapSource : SitemapSource
+    public sealed class RobotsTxtSitemapCollector : SitemapCollector
     {
-        public RobotsTxtSitemapSource(string robotsTxtPath)
+        public RobotsTxtSitemapCollector(string robotsTxtPath)
         {
             RobotsTxtPath = robotsTxtPath ?? throw new ArgumentNullException(nameof(robotsTxtPath));
         }
 
         public string RobotsTxtPath { get; }
 
-        internal override async Task<SitemapSourceResult> GetSitemapUrisAsync(Uri rootUri, HttpClient httpClient, CancellationToken cancellationToken)
+        internal override async Task<SitemapCollectionResult> GetSitemapsAsync(Uri rootUri, HttpClient httpClient, CancellationToken cancellationToken)
         {
             if (rootUri.TryAppendPath(RobotsTxtPath, out var robotsTxtUri) is false)
             {
-                return SitemapSourceResult.CreateInvalidUriResult();
+                return SitemapCollectionResult.CreateInvalidUriResult();
             }
             
             try
@@ -31,55 +31,66 @@ namespace Sitemapr.SitemapSources
             
                 if (response.IsSuccessStatusCode is false && response.StatusCode == HttpStatusCode.NotFound)
                 {
-                    return SitemapSourceResult.CreateNotFoundResult();
+                    return SitemapCollectionResult.CreateNotFoundResult();
                 }
                 
                 if (response.IsSuccessStatusCode is false)
                 {
-                    return SitemapSourceResult.CreateFailedResult();
+                    return SitemapCollectionResult.CreateFailedResult();
                 }
             
-                var sitemapUris = new List<Uri>();
-            
+                var sitemapPaths = new List<Uri>();
+
                 var responseContentStream = await response.Content.ReadAsStreamAsync();
                 using (var streamReader = new StreamReader(responseContentStream))
                 {
                     while (streamReader.EndOfStream is false)
                     {
                         var robotsTxtLine = await streamReader.ReadLineAsync();
-                        var sitemapUri = AnalyzeRobotsTxtLine(robotsTxtLine);
-                        sitemapUris.Add(sitemapUri);
+                        if (TryGetSitemapFromRobotsTxtLine(robotsTxtLine, out var sitemapUri))
+                        {
+                            sitemapPaths.Add(sitemapUri);
+                        }
                     }
                 }
             
-                return SitemapSourceResult.CreateSuccessfulResult(sitemapUris);
+                return SitemapCollectionResult.CreateSuccessfulResult(sitemapPaths);
             }
             catch(Exception exception)
             {
-                return SitemapSourceResult.CreateFailedResult(exception);
+                return SitemapCollectionResult.CreateFailedResult(exception);
             }
         }
 
-        private static Uri AnalyzeRobotsTxtLine(string robotsTxtLine)
+        private static bool TryGetSitemapFromRobotsTxtLine(string robotsTxtLine, out Uri sitemapPath)
         {
             if (robotsTxtLine.StartsWith("Sitemap:") is false)
             {
-                return null;
+                sitemapPath = null;
+                return false;
             }
 
             var sitemapSplit = robotsTxtLine.Split(new []{ ':' }, 2);
 
             if (sitemapSplit.Length != 2)
             {
-                return null;
+                sitemapPath = null;
+                return false;
             }
 
             var sitemapPathString = sitemapSplit[1].Trim();
 
-            return Uri.TryCreate(sitemapPathString, UriKind.Absolute, out var sitemapPath) ? sitemapPath : null;
+            if (Uri.TryCreate(sitemapPathString, UriKind.Absolute, out var tempSitemapPath))
+            {
+                sitemapPath = tempSitemapPath;
+                return true;
+            }
+            
+            sitemapPath = null;
+            return false;
         }
         
-        public static RobotsTxtSitemapSource CreateDefaultSource() =>
-            new RobotsTxtSitemapSource("/robots.txt");
+        public static RobotsTxtSitemapCollector CreateDefaultCollector() =>
+            new RobotsTxtSitemapCollector("/robots.txt");
     }
 }
