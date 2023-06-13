@@ -1,6 +1,6 @@
 namespace Sitemapr.Test.UnitTests.SitemapDetection;
 
-public sealed class SitemapsFromSitemapIndexTests
+public sealed class CollectSitemapsFromSitemapIndexTests
 {
     
 }

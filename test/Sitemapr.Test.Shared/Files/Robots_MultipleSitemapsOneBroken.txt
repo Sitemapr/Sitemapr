@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /wp-admin/
+Allow: /wp-admin/admin-ajax.php
+Sitemap: httpswww.examp
+Sitemap: https://www.example.com/en/sitemap.xml
+Sitemap: https://www.example.com/de/sitemap.xml

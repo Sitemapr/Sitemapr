@@ -6,4 +6,23 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <None Remove="Files\Robots_NoSitemaps.txt" />
+      <Content Include="Files\Robots_NoSitemaps.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Files\Robots_MultipleSitemapInEnd.txt" />
+      <Content Include="Files\Robots_MultipleSitemapInEnd.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Files\Robots_MultipleSitemapsInMultiplePlaces.txt" />
+      <Content Include="Files\Robots_MultipleSitemapsInMultiplePlaces.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Files\Robots_MultipleSitemapsOneBroken.txt" />
+      <Content Include="Files\Robots_MultipleSitemapsOneBroken.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>
