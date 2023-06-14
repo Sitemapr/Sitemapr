@@ -47,7 +47,9 @@ namespace Sitemapr.SitemapCollectors
                     while (streamReader.EndOfStream is false)
                     {
                         var robotsLine = await streamReader.ReadLineAsync();
-                        if (TryGetSitemapFromRobotsLine(robotsLine, out var sitemapUri))
+                        var parsingResult = robotsLine.TryParseRobotsSitemapUri(out var sitemapUri);
+
+                        if (parsingResult == RobotsSitemapUriParsingResult.ValidUrl)
                         {
                             sitemapPaths.Add(sitemapUri);
                         }
@@ -62,34 +64,6 @@ namespace Sitemapr.SitemapCollectors
             }
         }
 
-        private static bool TryGetSitemapFromRobotsLine(string robotsLine, out Uri sitemapPath)
-        {
-            if (robotsLine.StartsWith("Sitemap:") is false)
-            {
-                sitemapPath = null;
-                return false;
-            }
-
-            var sitemapSplit = robotsLine.Split(new []{ ':' }, 2);
-
-            if (sitemapSplit.Length != 2)
-            {
-                sitemapPath = null;
-                return false;
-            }
-
-            var sitemapPathString = sitemapSplit[1].Trim();
-
-            if (Uri.TryCreate(sitemapPathString, UriKind.Absolute, out var tempSitemapPath))
-            {
-                sitemapPath = tempSitemapPath;
-                return true;
-            }
-            
-            sitemapPath = null;
-            return false;
-        }
-        
         public static RobotsSitemapCollector CreateDefaultCollector() =>
             new RobotsSitemapCollector("/robots.txt");
     }
