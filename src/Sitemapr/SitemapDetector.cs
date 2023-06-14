@@ -120,7 +120,7 @@ namespace Sitemapr
 
         public SitemapDetectionOptions()
         {
-            Collectors = DefaultSitemapCollectors.Sitemap | DefaultSitemapCollectors.SitemapIndex | DefaultSitemapCollectors.RobotsTxt;
+            Collectors = DefaultSitemapCollectors.Sitemap | DefaultSitemapCollectors.SitemapIndex | DefaultSitemapCollectors.Robots;
             CustomCollectors = new List<SitemapCollector>();
             ValidateSitemaps = true;
             FilteringLevel = FilteringLevel.NotFound;
@@ -132,7 +132,7 @@ namespace Sitemapr
     {
         Sitemap,
         SitemapIndex,
-        RobotsTxt
+        Robots
     }
 
     public enum FilteringLevel

@@ -27,9 +27,9 @@ namespace Sitemapr.Utils
                     sitemapSources.Add(IndexSitemapCollector.CreateDefaultCollector());
                 }
                 
-                if (options.Collectors.Value.HasFlag(DefaultSitemapCollectors.RobotsTxt))
+                if (options.Collectors.Value.HasFlag(DefaultSitemapCollectors.Robots))
                 {
-                    sitemapSources.Add(RobotsTxtSitemapCollector.CreateDefaultCollector());
+                    sitemapSources.Add(RobotsSitemapCollector.CreateDefaultCollector());
                 }
             }
             

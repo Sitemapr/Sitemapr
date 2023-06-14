@@ -21,12 +21,7 @@ namespace Sitemapr.SitemapCollectors
             {
                 throw new ArgumentNullException(nameof(rootUri));
             }
-            
-            if (httpClient is null)
-            {
-                throw new ArgumentNullException(nameof(httpClient));
-            }
-            
+
             try
             {
                 if (rootUri.TryAppendPath(SitemapPath, out var sitemapUri) is false)
@@ -43,6 +38,6 @@ namespace Sitemapr.SitemapCollectors
         }
 
         public static StandardSitemapCollector CreateDefaultCollector() =>
-            new StandardSitemapCollector(Constants.Paths.Sitemap);
+            new StandardSitemapCollector("/sitemap.xml");
     }
 }
