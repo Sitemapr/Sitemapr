@@ -6,15 +6,21 @@ namespace Sitemapr.Fluent
 {
     public sealed class SitemapDetectionOptions
     {
-        public DefaultSitemapCollector? DefaultCollectors { get; set; }
-        public List<SitemapCollector> CustomCollectors { get; } = new List<SitemapCollector>();
+        public DefaultSitemapSource? DefaultSources { get; set; }
+        public List<SitemapCollector> CustomCollectors { get; }
+
+        public SitemapDetectionOptions()
+        {
+            DefaultSources = DefaultSitemapSource.Robots | DefaultSitemapSource.Sitemap | DefaultSitemapSource.SitemapIndex;
+            CustomCollectors = new List<SitemapCollector>();
+        }
     }
 
     [Flags]
-    public enum DefaultSitemapCollector
+    public enum DefaultSitemapSource
     {
-        SitemapXml,
-        SitemapIndexXml,
-        RobotsTxt
+        Sitemap,
+        SitemapIndex,
+        Robots
     }
 }
