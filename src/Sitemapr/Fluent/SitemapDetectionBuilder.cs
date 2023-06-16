@@ -4,9 +4,9 @@ using Sitemapr.Fluent.SitemapCollectors;
 
 namespace Sitemapr.Fluent
 {
-    public sealed class SitemapDetectorBuilder
+    public sealed class SitemapDetectionBuilder
     {
-        public SitemapDetectorBuilder(Uri rootUri)
+        public SitemapDetectionBuilder(Uri rootUri)
         {
             RootUri = rootUri;
         }
@@ -14,22 +14,22 @@ namespace Sitemapr.Fluent
         public Uri RootUri { get; }
         public SitemapDetectionOptions Options { get; private set; } = new SitemapDetectionOptions();
 
-        public SitemapDetectorBuilder WithAllDefaultSources() 
+        public SitemapDetectionBuilder WithAllDefaultSources() 
             => WithDefaultSources(DefaultSitemapSource.Robots | DefaultSitemapSource.Sitemap | DefaultSitemapSource.SitemapIndex);
 
-        public SitemapDetectorBuilder WithDefaultSources(DefaultSitemapSource defaultSources)
+        public SitemapDetectionBuilder WithDefaultSources(DefaultSitemapSource defaultSources)
         {
             Options.DefaultSources = defaultSources;
             return this;
         }
 
-        public SitemapDetectorBuilder WithNoDefaultSources()
+        public SitemapDetectionBuilder WithNoDefaultSources()
         {
             Options.DefaultSources = null;
             return this;
         }
 
-        public SitemapDetectorBuilder WithSitemap(string sitemapUri)
+        public SitemapDetectionBuilder WithSitemap(string sitemapUri)
         {
             if (sitemapUri is null)
             {
@@ -40,7 +40,7 @@ namespace Sitemapr.Fluent
             return WithSitemap(uri);
         }
         
-        public SitemapDetectorBuilder WithSitemap(Uri sitemapUri)
+        public SitemapDetectionBuilder WithSitemap(Uri sitemapUri)
         {
             if (sitemapUri is null)
             {
@@ -53,7 +53,7 @@ namespace Sitemapr.Fluent
             return this;
         }
         
-        public SitemapDetectorBuilder WithSitemapIndex(string sitemapIndexUri)
+        public SitemapDetectionBuilder WithSitemapIndex(string sitemapIndexUri)
         {
             if (sitemapIndexUri is null)
             {
@@ -64,7 +64,7 @@ namespace Sitemapr.Fluent
             return WithSitemapIndex(uri);
         }
         
-        public SitemapDetectorBuilder WithSitemapIndex(Uri sitemapIndexUri)
+        public SitemapDetectionBuilder WithSitemapIndex(Uri sitemapIndexUri)
         {
             if (sitemapIndexUri is null)
             {
@@ -77,7 +77,7 @@ namespace Sitemapr.Fluent
             return this;
         }
 
-        public SitemapDetectorBuilder ConfigureOptions(Action<SitemapDetectionOptions> configureOptions)
+        public SitemapDetectionBuilder ConfigureOptions(Action<SitemapDetectionOptions> configureOptions)
         {
             if (configureOptions is null)
             {
@@ -88,25 +88,17 @@ namespace Sitemapr.Fluent
             return this;
         }
 
-        public SitemapDetectorBuilder WithOptions(SitemapDetectionOptions options)
+        public SitemapDetectionBuilder WithOptions(SitemapDetectionOptions options)
         {
-            if (options is null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-
-            Options = options;
+            Options = options ?? throw new ArgumentNullException(nameof(options));
             return this;
         }
 
-        public string BuildReportGenerator()
+        public ISitemapReportGenerator BuildReportGenerator()
         {
             
         }
 
-        public string ToSitemapFetcher()
-        {
-            
-        }
+        public ISitemapFetcher BuildSitemapFetcher() => new SitemapFetcher(Options);
     }
 }

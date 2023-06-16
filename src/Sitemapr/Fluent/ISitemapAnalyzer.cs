@@ -4,6 +4,7 @@ namespace Sitemapr.Fluent
 {
     public interface ISitemapAnalyzer
     {
-        SitemapDetectorBuilder CreateSitemapDetector(Uri rootUri);
+        SitemapDetectionBuilder BuildSitemapDetector(Uri rootUri);
+        //
     }
 }

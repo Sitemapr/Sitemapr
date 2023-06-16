@@ -9,5 +9,5 @@ var sitemapAnalyzer = new SitemapAnalyzer();
 
 var cookiebotUri = new Uri("https://www.cookiebot.com/");
 
-var validSitemapUrlsList = sitemapAnalyzer.CreateSitemapDetector(cookiebotUri).GetValidSitemapUris().ToList();
-var bob = sitemapAnalyzer.CreateSitemapDetector(cookiebotUri).
+var validSitemapUrlsList = sitemapAnalyzer.BuildSitemapDetector(cookiebotUri).GetValidSitemapUris().ToList();
+var bob = sitemapAnalyzer.BuildSitemapDetector(cookiebotUri).
