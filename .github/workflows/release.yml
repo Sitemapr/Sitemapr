@@ -1,0 +1,35 @@
+name: Release
+on:
+  release:
+    types: [published]
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+    steps:
+      - name: Extract SemVer
+        env:
+          TAG_NAME: ${{ github.ref_name }}
+        run: echo "RELEASE_VERSION=${TAG_NAME#v}" >> $GITHUB_ENV
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ vars.DOTNET_VERSION }}
+      - name: Restore NuGet packages
+        run: dotnet restore
+      - name: Build solution
+        run: dotnet build -c Release --no-restore -p:Version=$RELEASE_VERSION
+      - name: Run tests
+        run: dotnet test -c Release --logger trx --results-directory ./TestResults
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: ./TestResults
+        if: ${{ always() }}
+      - name: Pack NuGet package
+        run: dotnet pack ./src/Sitemapr/Sitemapr.csproj -c Release --no-build -o ./output/ -p:Version=$RELEASE_VERSION
+      - name: Push Nuget package
+        run: dotnet nuget push ./output/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
