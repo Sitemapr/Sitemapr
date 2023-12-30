@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sitemapr", "src\Sitemapr\Sitemapr.csproj", "{0C6A2E02-4FD4-41D5-912E-94BE3336C1BD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sitemapr.UnitTests", "test\Sitemapr.UnitTests\Sitemapr.UnitTests.csproj", "{31268F88-FFD3-4EA2-81AE-FBF10CE8B668}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0C6A2E02-4FD4-41D5-912E-94BE3336C1BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C6A2E02-4FD4-41D5-912E-94BE3336C1BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C6A2E02-4FD4-41D5-912E-94BE3336C1BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C6A2E02-4FD4-41D5-912E-94BE3336C1BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31268F88-FFD3-4EA2-81AE-FBF10CE8B668}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31268F88-FFD3-4EA2-81AE-FBF10CE8B668}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31268F88-FFD3-4EA2-81AE-FBF10CE8B668}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31268F88-FFD3-4EA2-81AE-FBF10CE8B668}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
