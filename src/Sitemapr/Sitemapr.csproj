@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net461;netstandard2.0;netstandard2.1</TargetFrameworks>
+        <Authors>Sitemapr Contributors, Michel Gammelgaard</Authors>
+        <Company>Acidus</Company>
+        <Description>Dependency injection extensions for Sitemapr</Description>
+        <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+        <PackageTags>crawling;sitemap</PackageTags>
+        <Title>Sitemapr</Title>
+        <Copyright>Copyright (c) Acidus 2023</Copyright>
+        <PackageProjectUrl>https://github.com/Sitemapr/Sitemapr</PackageProjectUrl>
+        <PackageIcon>icon.png</PackageIcon>
+        <RepositoryUrl>https://github.com/Sitemapr/Sitemapr</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="../../assets/icon.png" Pack="true" PackagePath="\" Visible="false" />
+    </ItemGroup>
+
+</Project>
