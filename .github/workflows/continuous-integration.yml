@@ -2,7 +2,9 @@ name: Continuous Integration
 on:
   push:
     branches:
-      - '**'
+      - 'main'
+      - 'feature/**'
+      - 'bugfix/**'
   pull_request:
 jobs:
   restore-build-test:

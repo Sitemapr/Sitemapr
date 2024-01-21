@@ -30,6 +30,6 @@ jobs:
           path: ./TestResults
         if: ${{ always() }}
       - name: Pack NuGet package
-        run: dotnet pack ./src/Sitemapr/Sitemapr.csproj -c Release --no-build -o ./output/ -p:Version=$RELEASE_VERSION
+        run: dotnet pack -c Release --no-build -o ./output/ -p:Version=$RELEASE_VERSION
       - name: Push Nuget package
         run: dotnet nuget push ./output/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
